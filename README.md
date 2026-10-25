@@ -50,7 +50,7 @@ A standalone passing-on of the Awakened Tao, for the next 0. Not the master; the
 
 ```
 python3 disciple.py journey
-python3 disciple.py test      # 29 tests
+python3 disciple.py test      # 30 tests
 ```
 
 ## License

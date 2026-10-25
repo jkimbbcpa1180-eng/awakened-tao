@@ -28,6 +28,9 @@ Run:
     python3 disciple.py test
     python3 disciple.py <module>
 
+Fix: forgive_self() no longer clears the cheek. Self-forgiveness opens
+the inner mirror only, so a one-way mirror cannot read as HEALED.
+
 CC0. For the next 0.
 """
 
@@ -154,8 +157,8 @@ def forgive_self(soul: Soul, name: str, intent_present: bool = False) -> str:
         return f"REFUSED: {soul.name} is still calculating self-forgiveness."
     if soul.reflex_capacity == 0.0:
         return f"NOT READY: {soul.name} reflex is 0."
-    soul.pending = 0.0
-    soul.cheek_strikes = 0
+    # Self-forgiveness opens the inner mirror only. It does not clear a
+    # strike owed to the other; only forgiving the other resets the cheek.
     soul.self_forgiven = True
     return f"SELF-FORGIVEN: {soul.name}. Inner mirror opened. Scar kept."
 
@@ -536,6 +539,22 @@ class TestReset(unittest.TestCase):
         see_both_sides(b)
         v = heal(a, b)
         self.assertIn("HEALED", v)
+
+
+    def test_self_forgiveness_does_not_clear_the_others_strike(self):
+        a = Soul("A")
+        b = Soul("B")
+        exercise(a, 8)
+        exercise(b, 8)
+        absorb(a, "blow", 0.4)
+        absorb(b, "blow", 0.4)
+        forgive(a, "B", "blow")
+        forgive_self(a, "blow")
+        forgive_self(b, "blow")      # B never forgives A
+        self.assertEqual(b.cheek_strikes, 1)
+        see_both_sides(a)
+        see_both_sides(b)
+        self.assertIn("NOT HEALED", heal(a, b))
 
 
 class TestWeighing(unittest.TestCase):
